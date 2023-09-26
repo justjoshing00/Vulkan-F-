@@ -118,15 +118,27 @@ struct UniformBufferObject
     Matrix4 view;
     Matrix4 proj;
 };
-//struct CameraUniformBufferObject 
-//{   Matrix4 view;
-//    Matrix4 proj;
-//};
-//struct GlobalLightingUniformBufferObject 
-//{
-//    Vec4 position;
-//    Vec4 diffuse;
-//};
+struct CameraUniformBufferObject 
+{   Matrix4 view;
+    Matrix4 proj;
+};
+struct GlobalLightingUniformBufferObject 
+{
+    Vec4 position;
+    Vec4 diffuse;
+};
+
+//Made this to minimize errors from incorrect file path entry
+struct ShaderFilePaths
+{
+    std::string vert = "./shaders/vert.spv";
+    std::string frag = "./shaders/frag.spv";
+    std::string phongvert = "./shaders/phong.spv";
+    std::string phongfrag = "./shaders/phongfrag.spv";
+    std::string examplevert = "./shaders/example27.vert.spv";
+    std::string examplefrag = "./shaders/example27.frag.spv";
+    
+};
 
 
 class VulkanRenderer : public Renderer {
@@ -278,7 +290,7 @@ private:
     //CameraUniformBufferObject camubo;
     //GlobalLightingUniformBufferObject lightubo;
     //GlobalLightingUniformBufferObject lightubo2;
-    
+    ShaderFilePaths shaderfiles;
     
 
     VkShaderModule createShaderModule(const std::vector<char>& code);

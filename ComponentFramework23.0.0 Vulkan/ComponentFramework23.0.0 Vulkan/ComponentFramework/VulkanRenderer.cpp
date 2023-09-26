@@ -239,7 +239,7 @@ void VulkanRenderer::recreateSwapChain() {
     createSwapChain();
     createImageViews();
     createRenderPass();
-    CreateGraphicsPipeline("./shaders/example27.vert.spv", "./shaders/example27.frag.spv");
+    CreateGraphicsPipeline(shaderfiles.examplevert,shaderfiles.examplefrag);
     createDepthResources();
     createFramebuffers();
     createUniformBuffers();
