@@ -1,0 +1,6 @@
+﻿  Scene0.cpp
+  SceneManager.cpp
+  VulkanRenderer.cpp
+C:\Users\Josh\Desktop\ScottFolder\ComponentFramework23.0.0 Vulkan\ComponentFramework23.0.0 Vulkan\ComponentFramework\tiny_obj_loader.h(1665,27): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  ComponentFramework.vcxproj -> C:\Users\Josh\Desktop\ScottFolder\ComponentFramework23.0.0 Vulkan\ComponentFramework23.0.0 Vulkan\Debug\ComponentFramework.exe
