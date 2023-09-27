@@ -60,18 +60,20 @@ struct QueueFamilyIndices {
 };
 
     struct Vertex {
+        //yeah, this is a problem too. Again, its Vec4, Vec4, Vec2 - So this will cause issues with the stride, too
         Vec3 pos;
         Vec3 color;
         Vec2 texCoord;
-
+        // we need to get 2 more binding descriptions because we have 2 ubos and a push constant now.
         static VkVertexInputBindingDescription getBindingDescription() {
             VkVertexInputBindingDescription bindingDescription{};
             bindingDescription.binding = 0;
-            bindingDescription.stride = sizeof(Vertex); // this was why I threw an exception I think
+            bindingDescription.stride = sizeof(Vertex); //vertex size is wrong, unfortunately
             bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
             return bindingDescription;
         }
-
+        //this needs to change to be a different attribute layout i think.
+        //it was 106/rgb/vec3, and it needs to be 108/rgb/vec4 because the shader getting passed in is Vec4-Vec4-Vec2 instead of Vec3-Vec3-Vec2
         static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
             std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
@@ -127,6 +129,11 @@ struct GlobalLightingUniformBufferObject
     Vec4 position;
     Vec4 diffuse;
 };
+struct ModelUniformBufferObject
+{
+    Matrix4 model;
+    Matrix4 normal;
+};
 
 //Made this to minimize errors from incorrect file path entry
 struct ShaderFilePaths
@@ -138,6 +145,15 @@ struct ShaderFilePaths
     std::string examplevert = "./shaders/example27.vert.spv";
     std::string examplefrag = "./shaders/example27.frag.spv";
     
+};
+
+struct TextureFilePaths
+{
+    //TODO: add paths here
+};
+struct MeshFilePaths
+{
+    //TODO: add paths here
 };
 
 
@@ -156,9 +172,10 @@ public:
     void OnDestroy();
     void Render();
     void SetUBO(const Matrix4& projection, const Matrix4& view, const Matrix4& model);
-    void SetCameraUBO(const Matrix4& projection, const Matrix4& view, const Matrix4& model);
+    void SetCameraUBO(const Matrix4& projection, const Matrix4& view);
     void SetGlobalLightingUBO(const Vec4& diffuse,const Vec4& position);
     void SetGlobalLightingUBO2(const Vec4& diffuse,const Vec4& position);
+    void SetModelUBO(const Matrix4& model, const Matrix4& normal);
     SDL_Window* GetWindow() { return window; }
     void CreateTextureImage();
     void CreateGraphicsPipeline(const std::string vert, const std::string frag);
@@ -287,10 +304,13 @@ private:
     std::vector<VkFramebuffer> swapChainFramebuffers;
     
     UniformBufferObject ubo;
-    //CameraUniformBufferObject camubo;
-    //GlobalLightingUniformBufferObject lightubo;
-    //GlobalLightingUniformBufferObject lightubo2;
+    CameraUniformBufferObject camubo;
+    GlobalLightingUniformBufferObject lightubo;
+    GlobalLightingUniformBufferObject lightubo2;
+    ModelUniformBufferObject modelubo;
     ShaderFilePaths shaderfiles;
+    TextureFilePaths texturefiles;
+    MeshFilePaths meshfiles;
     
 
     VkShaderModule createShaderModule(const std::vector<char>& code);

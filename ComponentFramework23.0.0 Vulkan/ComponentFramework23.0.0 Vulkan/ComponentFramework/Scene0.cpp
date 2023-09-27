@@ -70,11 +70,11 @@ void Scene0::Render() const {
 	case RendererType::VULKAN:
 		VulkanRenderer* vRenderer;
 		vRenderer = dynamic_cast<VulkanRenderer*>(renderer);
-		vRenderer->SetUBO(camera->GetProjectionMatrix(), camera->GetViewMatrix(), mariosModelMatrix);
-		//vRenderer->SetCameraUBO(camera->GetProjectionMatrix(), camera->GetViewMatrix(), CameraMatrix); // this is one of the things im going to need to mess with
-		//vRenderer->SetGlobalLightingUBO(diffuse1,position1); // this is one of the things im going to need to mess with
-		//vRenderer->SetGlobalLightingUBO(diffuse2,position2); // this is one of the things im going to need to mess with
-		//vRenderer->SetModelUBO(mariosModelMatrix,mariosTransform); // this is the first thing im going to need to mess with
+		//vRenderer->SetUBO(camera->GetProjectionMatrix(), camera->GetViewMatrix(), mariosModelMatrix);
+		vRenderer->SetCameraUBO(camera->GetProjectionMatrix(), camera->GetViewMatrix()); 
+		vRenderer->SetGlobalLightingUBO(diffuse1,position1);
+		//vRenderer->SetGlobalLightingUBO(diffuse2,position2); 
+		vRenderer->SetModelUBO(mariosModelMatrix,mariosTransform); 
 		
 		
 		vRenderer->Render();
