@@ -133,7 +133,7 @@ void VulkanRenderer::initVulkan() {
     createImageViews();
     createRenderPass();
     createDescriptorSetLayout();
-    CreateGraphicsPipeline(shaderfiles.phongvert, shaderfiles.phongfrag);
+    CreateGraphicsPipeline("./shaders/example27.vert.spv", "./shaders/example27.frag.spv");
     createCommandPool();
     createDepthResources();
     createFramebuffers();
@@ -239,7 +239,7 @@ void VulkanRenderer::recreateSwapChain() {
     createSwapChain();
     createImageViews();
     createRenderPass();
-    CreateGraphicsPipeline(shaderfiles.phongvert,shaderfiles.phongfrag);
+    CreateGraphicsPipeline(shaderfiles.examplevert,shaderfiles.examplefrag);
     createDepthResources();
     createFramebuffers();
     createUniformBuffers();
@@ -518,7 +518,6 @@ void VulkanRenderer::createDescriptorSetLayout() {
     samplerLayoutBinding.descriptorCount = 1;
     samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     samplerLayoutBinding.pImmutableSamplers = nullptr;
-    //...and here is where we explicitly send it to the fragment shader
     samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
     std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
@@ -533,40 +532,50 @@ void VulkanRenderer::createDescriptorSetLayout() {
 }
 
 void VulkanRenderer::CreateGraphicsPipeline(const std::string vert, const std::string frag) {
-    
-    //the global lighting ubo is the only one that actually goes to both shaders.
-    //the camera and the model only go to the frag shader.
+    //TAG:DIFF
+    auto vertShaderCode = readFile(vert);
+    auto fragShaderCode = readFile(frag);
+    //auto phongVertShaderCode = vert;
+    //auto phongFragShaderCode = frag;
+    //TAG:DIFF
+    VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+    VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+    //VkShaderModule phongVertShaderModule = createShaderModule(phongVertShaderCode);
+    //VkShaderModule phongFragShaderModule = createShaderModule(phongFragShaderCode);
+    //TAG:DIFF
+    VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+    vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    vertShaderStageInfo.module = vertShaderModule;
+    vertShaderStageInfo.pName = "main";
+    //TAG:DIFF
+    VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+    fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    fragShaderStageInfo.module = fragShaderModule;
+    fragShaderStageInfo.pName = "main";
 
-    auto phongVertShaderCode = readFile(vert);
-    auto phongFragShaderCode = readFile(frag);
-    
-    VkShaderModule phongVertShaderModule = createShaderModule(phongVertShaderCode);
-    VkShaderModule phongFragShaderModule = createShaderModule(phongFragShaderCode);
-    
-
-    VkPipelineShaderStageCreateInfo phongVertShaderStageInfo{};
+    /*VkPipelineShaderStageCreateInfo phongVertShaderStageInfo{};
     phongVertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     phongVertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
     phongVertShaderStageInfo.module = phongVertShaderModule;
-    phongVertShaderStageInfo.pName = "main";
+    phongVertShaderStageInfo.pName = "main";*/
     
-    VkPipelineShaderStageCreateInfo phongFragShaderStageInfo{};
+    /*VkPipelineShaderStageCreateInfo phongFragShaderStageInfo{};
     phongFragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     phongFragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     phongFragShaderStageInfo.module = phongFragShaderModule;
-    phongFragShaderStageInfo.pName = "main";
+    phongFragShaderStageInfo.pName = "main";*/
 
-    VkPipelineShaderStageCreateInfo shaderStages[] = { phongVertShaderStageInfo, phongFragShaderStageInfo };
+    //TAG:DIFF
+    VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
-   
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    
-    //i think this might be where we have an issue
+
     auto bindingDescription = Vertex::getBindingDescription();
     auto attributeDescriptions = Vertex::getAttributeDescriptions();
 
-    //not sure about the binding description count, but the attribute description count should be 3 i think?
     vertexInputInfo.vertexBindingDescriptionCount = 1;
     vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
     vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
@@ -663,8 +672,8 @@ void VulkanRenderer::CreateGraphicsPipeline(const std::string vert, const std::s
         throw std::runtime_error("failed to create graphics pipeline!");
     }
 
-    vkDestroyShaderModule(device, phongFragShaderModule, nullptr);
-    vkDestroyShaderModule(device, phongVertShaderModule, nullptr);
+    vkDestroyShaderModule(device, fragShaderModule, nullptr);
+    vkDestroyShaderModule(device, vertShaderModule, nullptr);
 }
 
 void VulkanRenderer::createFramebuffers() {
@@ -1247,27 +1256,22 @@ void VulkanRenderer::SetUBO(const Matrix4& projection, const Matrix4& view, cons
     ubo.model = model;
     ubo.proj[5] *= -1.0f;
 }
-void VulkanRenderer::SetGlobalLightingUBO(const Vec4& diffuse, const Vec4& position) {
-    lightubo.diffuse = diffuse;
-    lightubo.position = position;
+//void VulkanRenderer::SetGlobalLightingUBO(const Vec4& diffuse, const Vec4& position) {
+//    lightubo.diffuse = diffuse;
+//    lightubo.position = position;
+//    
+//}
+//void VulkanRenderer::SetGlobalLightingUBO2(const Vec4& diffuse, const Vec4& position) {
+//    lightubo.diffuse = diffuse;
+//    lightubo.position = position;
     
-}
-void VulkanRenderer::SetGlobalLightingUBO2(const Vec4& diffuse, const Vec4& position) {
-    lightubo.diffuse = diffuse;
-    lightubo.position = position;
-    
-}
+//}
 //maybe consider moving this to the camera or something?
-void VulkanRenderer::SetCameraUBO(const Matrix4& projection, const Matrix4& view) {
-    camubo.proj = projection;
-    camubo.view = view;
-    camubo.proj[5] *= -1.0f;
-}
-void VulkanRenderer::SetModelUBO(const Matrix4& model, const Matrix4& normal)
-{
-    modelubo.model = model;
-    modelubo.normal = normal;
-}
+//void VulkanRenderer::SetCameraUBO(const Matrix4& projection, const Matrix4& view, const Matrix4& model) {
+//    camubo.proj = projection;
+//    camubo.view = view;
+//    camubo.proj[5] *= -1.0f;
+//}
 
 
 void VulkanRenderer::updateUniformBuffer(uint32_t currentImage) {
@@ -1457,7 +1461,7 @@ std::vector<char> VulkanRenderer::readFile(const std::string& filename) {
 
         throw std::runtime_error("failed to open file!");
     }
-    
+    //TAG:TODO:Fix memory problems I just caused in here
     size_t fileSize = (size_t)file.tellg();
     std::vector<char> buffer(fileSize);
 
