@@ -138,5 +138,17 @@
     <None Include="shaders\phongfrag.spv">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="shaders\phong.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\phong.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\badphong.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\badphong.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -24,13 +24,14 @@ layout(push_constant) uniform Push {
 layout (location = 0) out vec3 vertNormal;
 layout (location = 1) out vec3 lightDir;
 layout (location = 2) out vec3 eyeDir;
-layout (location = 3) out vec2 fragTexCoords;
+layout (location = 3) out vec2 fragmentTexCoords;
 
 
 void main() {
-	fragTexCoords = texCoords;
+	fragmentTexCoords = texCoords;
 	
 	mat3 normalMatrix = mat3(push.normalMatrix);
+	//mat3 normalMatrix = mat3(inverse(transpose(modelMatrix));
 
 	vertNormal = normalize(normalMatrix * vNormal.xyz); /// Rotate the normal to the correct orientation 
 	vec3 vertPos = vec3(camera.viewMatrix * push.modelMatrix * vVertex); /// This is the position of the vertex from the origin

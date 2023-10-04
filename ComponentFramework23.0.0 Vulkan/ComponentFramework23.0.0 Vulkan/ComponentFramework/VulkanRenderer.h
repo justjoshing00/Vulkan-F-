@@ -60,8 +60,8 @@ struct QueueFamilyIndices {
 };
 
     struct Vertex {
-        Vec3 pos;
-        Vec3 color;
+        Vec3 vVertex;
+        Vec3 vNormal;
         Vec2 texCoord;
 
         static VkVertexInputBindingDescription getBindingDescription() {
@@ -78,12 +78,12 @@ struct QueueFamilyIndices {
             attributeDescriptions[0].binding = 0;
             attributeDescriptions[0].location = 0;
             attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[0].offset = offsetof(Vertex, pos);
+            attributeDescriptions[0].offset = offsetof(Vertex, vVertex);
 
             attributeDescriptions[1].binding = 0;
             attributeDescriptions[1].location = 1;
             attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[1].offset = offsetof(Vertex, color);
+            attributeDescriptions[1].offset = offsetof(Vertex, vNormal);
 
             attributeDescriptions[2].binding = 0;
             attributeDescriptions[2].location = 2;
@@ -93,7 +93,7 @@ struct QueueFamilyIndices {
             return attributeDescriptions;
         }
         bool operator == (const Vertex& other) const {
-            return pos == other.pos && color == other.color && texCoord == other.texCoord;
+            return vVertex == other.vVertex && vNormal == other.vNormal && texCoord == other.texCoord;
         }
         
     }; /// End of struct Vertex
@@ -102,8 +102,8 @@ struct QueueFamilyIndices {
     namespace std {
         template<> struct hash<Vertex> {
             size_t operator()(Vertex const& vertex) const noexcept {
-                size_t hash1 = hash<Vec3>()(vertex.pos);
-                size_t hash2 = hash<Vec3>()(vertex.color);
+                size_t hash1 = hash<Vec3>()(vertex.vVertex);
+                size_t hash2 = hash<Vec3>()(vertex.vNormal);
                 size_t hash3 = hash<Vec2>()(vertex.texCoord);
                 size_t result = ((hash1 ^ (hash2 << 1)) >> 1) ^ (hash3 << 1);
                 return result;
@@ -112,15 +112,11 @@ struct QueueFamilyIndices {
     }
 
  
-struct UniformBufferObject 
-{
-    Matrix4 model;
-    Matrix4 view;
-    Matrix4 proj;
-};
+
 struct CameraUniformBufferObject 
 {   Matrix4 view;
     Matrix4 proj;
+    Matrix4 model;
 };
 struct GlobalLightingUniformBufferObject 
 {
@@ -136,7 +132,14 @@ struct ShaderFilePaths
     std::string phongvert = "./shaders/phong.spv";
     std::string phongfrag = "./shaders/phongfrag.spv";
     std::string examplevert = "./shaders/example27.vert.spv";
-    std::string examplefrag = "./shaders/example27.frag.spv";
+    std::string badphongvert = "./shaders/badphongvert.spv";
+    std::string badphongfrag = "./shaders/badphongfrag.spv";
+    
+
+    //std::string hellovert = "./shaders/hello.spv";
+    //std::string hellofrag = "./shaders/hello.spv";
+    //std::string texture = "./shaders/hello.spv";
+    //std::string texture = "./shaders/hello.spv";
     
 };
 
@@ -155,10 +158,10 @@ public:
     bool OnCreate();
     void OnDestroy();
     void Render();
-    void SetUBO(const Matrix4& projection, const Matrix4& view, const Matrix4& model);
+    
     void SetCameraUBO(const Matrix4& projection, const Matrix4& view, const Matrix4& model);
     void SetGlobalLightingUBO(const Vec4& diffuse,const Vec4& position);
-    void SetGlobalLightingUBO2(const Vec4& diffuse,const Vec4& position);
+    
     SDL_Window* GetWindow() { return window; }
     void CreateTextureImage();
     void CreateGraphicsPipeline(const std::string vert, const std::string frag);
@@ -195,8 +198,10 @@ private:
     VkBuffer indexBuffer;
     VkDeviceMemory indexBufferMemory;
 
-    std::vector<VkBuffer> uniformBuffers;
-    std::vector<VkDeviceMemory> uniformBuffersMemory;
+    std::vector<VkBuffer> cameraUniformBuffers; //`
+    std::vector<VkBuffer> lightUniformBuffers; //`
+    std::vector<VkDeviceMemory> cameraBuffersMemory; //`
+    std::vector<VkDeviceMemory> lightBuffersMemory;//`
     std::vector<VkCommandBuffer> commandBuffers;
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;
@@ -218,11 +223,12 @@ private:
     void createSwapChain();
     void createImageViews();
     void recreateSwapChain();
-    void updateUniformBuffer(uint32_t currentImage);
+    void updateUniformCameraBuffer(uint32_t currentImage); //`
+    void updateUniformLightBuffer(uint32_t currentImage); //`
     VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
     void createRenderPass();
     //mutable
-    void createDescriptorSetLayout();
+    void createDescriptorSetLayout(); //`
     void createFramebuffers();
     void createCommandPool();
     void createDepthResources();
@@ -236,10 +242,11 @@ private:
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
     void createIndexBuffer();
     //mutable
-    void createUniformBuffers();
+    void createUniformCameraBuffers(); //`
+    void createUniformLightBuffers(); //`
     void createDescriptorPool();
     //mutable
-    void createDescriptorSets();
+    void createDescriptorSets(); //`
     void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
     void createCommandBuffers();
@@ -286,10 +293,11 @@ private:
     std::vector<VkImageView> swapChainImageViews;
     std::vector<VkFramebuffer> swapChainFramebuffers;
     
-    UniformBufferObject ubo;
-    //CameraUniformBufferObject camubo;
-    //GlobalLightingUniformBufferObject lightubo;
-    //GlobalLightingUniformBufferObject lightubo2;
+    
+    CameraUniformBufferObject camubo;
+    GlobalLightingUniformBufferObject lightubo; // this would be two lights?
+    
+    //do this for all incoming files, if possible
     ShaderFilePaths shaderfiles;
     
 

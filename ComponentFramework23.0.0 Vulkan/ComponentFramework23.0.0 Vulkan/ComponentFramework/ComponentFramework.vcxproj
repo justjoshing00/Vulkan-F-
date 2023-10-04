@@ -158,8 +158,12 @@
     <Text Include="Graphics Game Engine_Log.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\badphong.frag" />
+    <None Include="shaders\badphong.vert" />
     <None Include="shaders\frag.spv" />
+    <None Include="shaders\phong.frag" />
     <None Include="shaders\phong.spv" />
+    <None Include="shaders\phong.vert" />
     <None Include="shaders\phongfrag.spv" />
     <None Include="shaders\vert.spv" />
   </ItemGroup>
