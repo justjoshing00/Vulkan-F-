@@ -1,4 +1,4 @@
 @echo off
-glslc.exe -c "./badphong.vert" -o "./badphongvert.spv"
+glslc.exe -c "./multibadphong.vert" -o "./multibadphongvert.spv"
 echo Created spv file: %output% 
 pause

@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Renderer.h"
 #include "Camera.h"
+#include <array>
 using namespace MATH;
 
 /// Forward declarations 
@@ -19,12 +20,11 @@ private:
 	Matrix4 mariosTransform;
 	Matrix4 Light1Matrix;
 	Matrix4 CameraMatrix;
-	Vec4 diffuse1;
-	Vec4 diffuse2;
-	Vec4 position1;
-	Vec4 position2;
-
 	
+	
+	std::array<Vec4, 2> diffuses = { Vec4(0,0,0,0),Vec4(0,0,0,0) };
+	std::array<Vec4, 2> positions = { Vec4(0,0,0,0),Vec4(0,0,0,0) };
+
 
 public:
 	explicit Scene0(Renderer* renderer_);

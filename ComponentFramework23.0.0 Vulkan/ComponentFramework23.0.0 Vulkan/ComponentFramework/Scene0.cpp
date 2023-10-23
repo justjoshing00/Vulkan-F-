@@ -1,3 +1,4 @@
+
 #include <glew.h>
 #include <iostream>
 #include "Debug.h"
@@ -29,11 +30,9 @@ bool Scene0::OnCreate() {
 		aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 		camera->Perspective(45.0f, aspectRatio, 0.5f, 20.0f);
 		camera->LookAt(Vec3(0.0f, 0.0f, 5.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
-		diffuse1 = {3,0,0,0}; 
-		position1 = {1,1,1,0}; //might not be right, double check this
-		diffuse2 = { 0,1,0,0 };
-		position2 = { 10,10,10,0 };
-		//mariosTransform = MMath::scale(0.1f, 0.1f, 0.1f);
+		diffuses = { Vec4(0.9f,0.33f,0.0f,0.0f), Vec4(0.33f,0.9f,0.0,0.0f) };
+		positions = { Vec4(-8,3,1,0), Vec4(8,3,1,0) }; 
+		
 		break;
 
 	case RendererType::OPENGL:
@@ -71,8 +70,8 @@ void Scene0::Render() const {
 		VulkanRenderer* vRenderer;
 		vRenderer = dynamic_cast<VulkanRenderer*>(renderer);
 		vRenderer->SetCameraUBO(camera->GetProjectionMatrix(), camera->GetViewMatrix(), CameraMatrix); // this is one of the things im going to need to mess with
-		vRenderer->SetGlobalLightingUBO(diffuse1,position1); // this is one of the things im going to need to mess with
-		
+		vRenderer->SetGlobalLightingUBO(diffuses,positions); // this is one of the things im going to need to mess with
+		vRenderer->SetModelConstant(mariosModelMatrix, mariosTransform);
 		
 		
 		

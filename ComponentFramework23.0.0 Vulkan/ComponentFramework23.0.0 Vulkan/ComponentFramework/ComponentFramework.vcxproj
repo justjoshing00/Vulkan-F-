@@ -138,8 +138,12 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="Descriptor.h" />
+    <ClInclude Include="FileLists.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="Materials.h" />
     <ClInclude Include="OpenGLRenderer.h" />
+    <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Matrix.h" />
@@ -150,7 +154,9 @@
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="tiny_obj_loader.h" />
+    <ClInclude Include="UBO.h" />
     <ClInclude Include="Vector.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="VMath.h" />
     <ClInclude Include="VulkanRenderer.h" />
   </ItemGroup>
@@ -161,6 +167,8 @@
     <None Include="shaders\badphong.frag" />
     <None Include="shaders\badphong.vert" />
     <None Include="shaders\frag.spv" />
+    <None Include="shaders\multibadphong.frag" />
+    <None Include="shaders\multibadphong.vert" />
     <None Include="shaders\phong.frag" />
     <None Include="shaders\phong.spv" />
     <None Include="shaders\phong.vert" />

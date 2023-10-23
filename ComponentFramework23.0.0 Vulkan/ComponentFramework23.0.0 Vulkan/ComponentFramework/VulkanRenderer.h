@@ -19,14 +19,19 @@
 #include <array>
 #include <chrono>
 
+#include "Vertex.h"
+
 #include "Vector.h"
 #include "VMath.h"
 #include "MMath.h"
 #include "Hash.h"
+
 using namespace MATH;
 
 
 #include "Renderer.h"
+#include "FileLists.h"
+#include "UBO.h"
 
 
 const std::vector<const char*> validationLayers = {
@@ -59,91 +64,6 @@ struct QueueFamilyIndices {
     std::vector<VkPresentModeKHR> presentModes;
 };
 
-    struct Vertex {
-        Vec3 vVertex;
-        Vec3 vNormal;
-        Vec2 texCoord;
-
-        static VkVertexInputBindingDescription getBindingDescription() {
-            VkVertexInputBindingDescription bindingDescription{};
-            bindingDescription.binding = 0;
-            bindingDescription.stride = sizeof(Vertex); // this was why I threw an exception I think
-            bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-            return bindingDescription;
-        }
-
-        static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
-
-            attributeDescriptions[0].binding = 0;
-            attributeDescriptions[0].location = 0;
-            attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[0].offset = offsetof(Vertex, vVertex);
-
-            attributeDescriptions[1].binding = 0;
-            attributeDescriptions[1].location = 1;
-            attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[1].offset = offsetof(Vertex, vNormal);
-
-            attributeDescriptions[2].binding = 0;
-            attributeDescriptions[2].location = 2;
-            attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-            attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
-
-            return attributeDescriptions;
-        }
-        bool operator == (const Vertex& other) const {
-            return vVertex == other.vVertex && vNormal == other.vNormal && texCoord == other.texCoord;
-        }
-        
-    }; /// End of struct Vertex
-
-
-    namespace std {
-        template<> struct hash<Vertex> {
-            size_t operator()(Vertex const& vertex) const noexcept {
-                size_t hash1 = hash<Vec3>()(vertex.vVertex);
-                size_t hash2 = hash<Vec3>()(vertex.vNormal);
-                size_t hash3 = hash<Vec2>()(vertex.texCoord);
-                size_t result = ((hash1 ^ (hash2 << 1)) >> 1) ^ (hash3 << 1);
-                return result;
-            }
-        };
-    }
-
- 
-
-struct CameraUniformBufferObject 
-{   Matrix4 view;
-    Matrix4 proj;
-    Matrix4 model;
-};
-struct GlobalLightingUniformBufferObject 
-{
-    Vec4 position;
-    Vec4 diffuse;
-};
-
-//Made this to minimize errors from incorrect file path entry
-struct ShaderFilePaths
-{
-    std::string vert = "./shaders/vert.spv";
-    std::string frag = "./shaders/frag.spv";
-    std::string phongvert = "./shaders/phong.spv";
-    std::string phongfrag = "./shaders/phongfrag.spv";
-    std::string examplevert = "./shaders/example27.vert.spv";
-    std::string badphongvert = "./shaders/badphongvert.spv";
-    std::string badphongfrag = "./shaders/badphongfrag.spv";
-    
-
-    //std::string hellovert = "./shaders/hello.spv";
-    //std::string hellofrag = "./shaders/hello.spv";
-    //std::string texture = "./shaders/hello.spv";
-    //std::string texture = "./shaders/hello.spv";
-    
-};
-
-
 class VulkanRenderer : public Renderer {
 public:
     /// C11 precautions 
@@ -160,8 +80,8 @@ public:
     void Render();
     
     void SetCameraUBO(const Matrix4& projection, const Matrix4& view, const Matrix4& model);
-    void SetGlobalLightingUBO(const Vec4& diffuse,const Vec4& position);
-    
+    void SetGlobalLightingUBO(const std::array<Vec4, 2>& diffuses, const std::array<Vec4, 2>& positions);
+    void SetModelConstant(const Matrix4& model, const Matrix4& normal);
     SDL_Window* GetWindow() { return window; }
     void CreateTextureImage();
     void CreateGraphicsPipeline(const std::string vert, const std::string frag);
@@ -294,12 +214,16 @@ private:
     std::vector<VkFramebuffer> swapChainFramebuffers;
     
     
-    CameraUniformBufferObject camubo;
-    GlobalLightingUniformBufferObject lightubo; // this would be two lights?
+    CameraUBO camubo;
+    std::array<GlobalLight, 2> Lights;
+    MarioData Mario;
+     
+
     
     //do this for all incoming files, if possible
     ShaderFilePaths shaderfiles;
-    
+    TextureFilePaths texturefiles;
+    MeshFilePaths meshfiles;
 
     VkShaderModule createShaderModule(const std::vector<char>& code);
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
