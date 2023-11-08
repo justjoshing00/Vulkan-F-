@@ -1,6 +1,5 @@
 #include "VulkanRenderer.h"
-#include "Descriptor.h"
-#include "Pipeline.h"
+#include "Utilities.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
@@ -100,6 +99,8 @@ void VulkanRenderer::Render() {
     else if (result != VK_SUCCESS) {
         throw std::runtime_error("failed to present swap chain image!");
     }
+    //vk free command buffer
+    //vk createcommandbuffer
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
@@ -177,7 +178,10 @@ void VulkanRenderer::cleanupSwapChain() {
 
     vkDestroySwapchainKHR(device, swapChain, nullptr);
     
-    for (size_t i = 0; i < swapChainImages.size(); i++) {
+    for (size_t i = 0; i < swapChainImages.size(); i++) 
+    {
+        //I'm thinking it might be a good idea to create something 'register' buffers to,
+        //so that when the program gets here I can loop though that to destroy the buffers.
         vkDestroyBuffer(device, cameraUniformBuffers[i], nullptr);
         vkFreeMemory(device, cameraBuffersMemory[i], nullptr);
         vkDestroyBuffer(device, lightUniformBuffers[i], nullptr);
@@ -514,9 +518,9 @@ void VulkanRenderer::createRenderPass() {
 }
 
 void VulkanRenderer::createDescriptorSetLayout() {
-    VkDescriptorSetLayoutBinding cameraLayoutBinding = CreateDescriptorBinding(0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+    VkDescriptorSetLayoutBinding cameraLayoutBinding = VkUtilities::CreateDescriptorBinding(0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
     //I cant figure out how to do this for the lighting layout, see descriptor.h for details
-    VkDescriptorSetLayoutBinding samplerLayoutBinding = CreateDescriptorBinding(2, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+    VkDescriptorSetLayoutBinding samplerLayoutBinding = VkUtilities::CreateDescriptorBinding(2, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
     VkDescriptorSetLayoutBinding lightingLayoutBinding{};
     lightingLayoutBinding.binding = 1;
@@ -542,15 +546,15 @@ void VulkanRenderer::createDescriptorSetLayout() {
 void VulkanRenderer::CreateGraphicsPipeline(const std::string vert, const std::string frag) {
    
     
-    //TAG:DIFF
+    
     VkShaderModule phongVertShaderModule = createShaderModule(readFile(vert));
     VkShaderModule phongFragShaderModule = createShaderModule(readFile(frag));
     
-    VkPipelineShaderStageCreateInfo phongVertShaderStageInfo = CreatePipeLineinfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, VK_SHADER_STAGE_VERTEX_BIT,phongVertShaderModule,"main");
-    VkPipelineShaderStageCreateInfo phongFragShaderStageInfo = CreatePipeLineinfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, VK_SHADER_STAGE_FRAGMENT_BIT, phongFragShaderModule, "main");
+    VkPipelineShaderStageCreateInfo phongVertShaderStageInfo = VkUtilities::CreatePipeLineinfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, VK_SHADER_STAGE_VERTEX_BIT,phongVertShaderModule,"main");
+    VkPipelineShaderStageCreateInfo phongFragShaderStageInfo = VkUtilities::CreatePipeLineinfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, VK_SHADER_STAGE_FRAGMENT_BIT, phongFragShaderModule, "main");
 
     
-    //TAG:DIFF
+    
     VkPipelineShaderStageCreateInfo shaderStages[] = { phongVertShaderStageInfo, phongFragShaderStageInfo };
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
@@ -637,7 +641,7 @@ void VulkanRenderer::CreateGraphicsPipeline(const std::string vert, const std::s
     pipelineLayoutInfo.pushConstantRangeCount = 1;
     VkPushConstantRange pushConstant;
     pushConstant.offset = 0;
-    pushConstant.size = sizeof(MarioData);
+    pushConstant.size = sizeof(VkConcepts::UniformBufferObjects::MarioData);
     pushConstant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     pipelineLayoutInfo.pPushConstantRanges = &pushConstant;
     if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
@@ -920,7 +924,7 @@ void VulkanRenderer::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t 
 
     endSingleTimeCommands(commandBuffer);
 }
-
+//generalize this
 void VulkanRenderer::LoadModelIndexed() {//this is where mario is loaded in
     const char* filename = meshfiles.mario.data();
     tinyobj::attrib_t attrib;
@@ -960,7 +964,7 @@ void VulkanRenderer::LoadModelIndexed() {//this is where mario is loaded in
         }
     }
 }
-
+//these two routunes for assignment 3
 void VulkanRenderer::createVertexBuffer() {
     VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
@@ -1003,7 +1007,7 @@ void VulkanRenderer::createIndexBuffer() {
 }
 
 void VulkanRenderer::createUniformCameraBuffers() {
-    VkDeviceSize bufferSize = sizeof(CameraUBO);
+    VkDeviceSize bufferSize = sizeof(VkConcepts::UniformBufferObjects::CameraUBO);
 
     cameraUniformBuffers.resize(swapChainImages.size());
     cameraBuffersMemory.resize(swapChainImages.size());
@@ -1213,6 +1217,7 @@ void VulkanRenderer::createCommandBuffers() {
         renderPassInfo.renderArea.extent = swapChainExtent;
         
         //clear the background
+        //maybe rewrite this to work opengl style with a function call
         std::array<VkClearValue, 2> clearValues{};
         clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
         clearValues[1].depthStencil = { 1.0f, 0 };
@@ -1288,7 +1293,6 @@ void VulkanRenderer::SetModelConstant(const Matrix4& model, const Matrix4& norma
 {
     Mario.model = model;
     Mario.normal = MMath::inverse(MMath::transpose(normal));
-    
     
 }
 
@@ -1488,7 +1492,7 @@ std::vector<char> VulkanRenderer::readFile(const std::string& filename) {
 
         throw std::runtime_error("failed to open file!");
     }
-    //TAG:TODO:Fix memory problems I just caused in here
+    
     size_t fileSize = (size_t)file.tellg();
     std::vector<char> buffer(fileSize);
 

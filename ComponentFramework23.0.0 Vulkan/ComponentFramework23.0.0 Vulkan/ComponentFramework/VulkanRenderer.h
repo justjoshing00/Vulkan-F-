@@ -30,8 +30,8 @@ using namespace MATH;
 
 
 #include "Renderer.h"
-#include "FileLists.h"
-#include "UBO.h"
+#include "VulkanConcepts.h"
+
 
 
 const std::vector<const char*> validationLayers = {
@@ -214,16 +214,16 @@ private:
     std::vector<VkFramebuffer> swapChainFramebuffers;
     
     
-    CameraUBO camubo;
-    std::array<GlobalLight, 2> Lights;
-    MarioData Mario;
+    VkConcepts::UniformBufferObjects::CameraUBO camubo;
+    std::array<VkConcepts::UniformBufferObjects::GlobalLight, 2> Lights;
+    VkConcepts::UniformBufferObjects::MarioData Mario;
      
 
     
     //do this for all incoming files, if possible
-    ShaderFilePaths shaderfiles;
-    TextureFilePaths texturefiles;
-    MeshFilePaths meshfiles;
+    VkConcepts::FileNames::ShaderFilePaths shaderfiles;
+    VkConcepts::FileNames::TextureFilePaths texturefiles;
+    VkConcepts::FileNames::MeshFilePaths meshfiles;
 
     VkShaderModule createShaderModule(const std::vector<char>& code);
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

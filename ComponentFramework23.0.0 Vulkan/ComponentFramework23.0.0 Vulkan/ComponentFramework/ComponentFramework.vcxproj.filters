@@ -31,6 +31,9 @@
     <Filter Include="Source Files\Renderers">
       <UniqueIdentifier>{30c80976-ed84-4ca8-ab3a-bd86aa11c0ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Temporarydumping ground">
+      <UniqueIdentifier>{be36e8a0-f07e-4fa4-ad71-dbfc15b487a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -120,21 +123,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
+      <Filter>Header Files\Temporarydumping ground</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanConcepts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UBO.h">
+    <ClInclude Include="MyConcepts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Materials.h">
+    <ClInclude Include="InputData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileLists.h">
+    <ClInclude Include="Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Descriptor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Pipeline.h">
+    <ClInclude Include="Processes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

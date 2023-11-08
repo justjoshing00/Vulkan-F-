@@ -41,11 +41,9 @@ layout (location = 4) out vec3 lightDir2;
 void main()
 {
 	fragmentTexCoords = texCoords;
-	// TODO: fix for extra creds
 	
-	// the compiler hasnt been run on this yet, this is NOT what the SPV file looks like rn
-	mat3 normalMatrix = PushConstant.normal;
-	//end of glsl/spv disparity
+	mat3 normalMatrix = mat3(PushConstant.normal);
+	
 
 	vertNormal = normalize(normalMatrix * vNormal.xyz); /// Rotate the normal to the correct orientation 
 	vec3 vertPos = vec3(camera.viewMatrix * PushConstant.modelMatrix * vVertex); /// This is the position of the vertex from the origin

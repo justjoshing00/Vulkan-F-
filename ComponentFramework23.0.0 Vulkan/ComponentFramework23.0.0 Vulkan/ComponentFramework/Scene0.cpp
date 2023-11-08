@@ -30,9 +30,10 @@ bool Scene0::OnCreate() {
 		aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 		camera->Perspective(45.0f, aspectRatio, 0.5f, 20.0f);
 		camera->LookAt(Vec3(0.0f, 0.0f, 5.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
-		diffuses = { Vec4(0.9f,0.33f,0.0f,0.0f), Vec4(0.33f,0.9f,0.0,0.0f) };
-		positions = { Vec4(-8,3,1,0), Vec4(8,3,1,0) }; 
-		
+		diffuses = { Vec4(1.0f,1.0f,1.0f,0.0f), Vec4(0.33f,0.6f,0.0,0.0f) };
+		positions = { Vec4(-15,1,1,0), Vec4(15,1,1,0) };
+		//mariosModelMatrix = MMath::translate(2.0f, 2.0f,2.0f);
+		//mariosTransform = mariosModelMatrix;
 		break;
 
 	case RendererType::OPENGL:
@@ -57,7 +58,7 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent) {
 void Scene0::Update(const float deltaTime) {
 	static float elapsedTime = 0.0f;
 	elapsedTime += deltaTime;
-	mariosModelMatrix = MMath::rotate(elapsedTime * 90.0f, Vec3(0.0f, 1.0f, 0.0f));
+	//mariosModelMatrix = MMath::rotate(elapsedTime * 90.0f, Vec3(0.0f, 1.0f, 0.0f));
 	
 
 }
