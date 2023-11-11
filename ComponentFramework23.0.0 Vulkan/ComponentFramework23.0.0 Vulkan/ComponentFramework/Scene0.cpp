@@ -32,8 +32,6 @@ bool Scene0::OnCreate() {
 		camera->LookAt(Vec3(0.0f, 0.0f, 5.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
 		diffuses = { Vec4(1.0f,1.0f,1.0f,0.0f), Vec4(0.33f,0.6f,0.0,0.0f) };
 		positions = { Vec4(-15,1,1,0), Vec4(15,1,1,0) };
-		//mariosModelMatrix = MMath::translate(2.0f, 2.0f,2.0f);
-		//mariosTransform = mariosModelMatrix;
 		break;
 
 	case RendererType::OPENGL:

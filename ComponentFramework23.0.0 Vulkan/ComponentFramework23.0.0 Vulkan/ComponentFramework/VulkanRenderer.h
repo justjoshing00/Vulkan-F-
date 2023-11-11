@@ -216,7 +216,7 @@ private:
     
     VkConcepts::UniformBufferObjects::CameraUBO camubo;
     std::array<VkConcepts::UniformBufferObjects::GlobalLight, 2> Lights;
-    VkConcepts::UniformBufferObjects::MarioData Mario;
+    VkConcepts::PushConstants::MarioData Mario;
      
 
     

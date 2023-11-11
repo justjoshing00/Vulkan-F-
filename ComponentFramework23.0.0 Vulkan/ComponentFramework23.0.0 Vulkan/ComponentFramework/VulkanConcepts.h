@@ -5,7 +5,7 @@ namespace VkConcepts
 	//these are anything vulkan recognizes as a concept. If you crack open a vulkan tutorial and see it on a slide, youll see it here. 
 	namespace Descriptors
 	{
-
+		//vulkan descriptors go in here
 	}
 
 	namespace UniformBufferObjects
@@ -56,12 +56,7 @@ namespace VkConcepts
 			Vec4 position;
 		};
 
-		struct MarioData
-		{
-			Matrix4 model;
-			Matrix4 normal;
-		};
-
+		
 		struct CameraUBO
 		{
 		public:
@@ -72,11 +67,11 @@ namespace VkConcepts
 	}
 	namespace Commands
 	{
-
+		// vulkan commands go in here
 	}
 	namespace Pipelines
 	{
-
+		// vulkan pipelines go in here
 	}
 	namespace FileNames
 	{
@@ -114,6 +109,15 @@ namespace VkConcepts
 	}
 	namespace PushConstants
 	{
+		// pushconstants go in here. I know the GPU can only *use* one, but if you have a bunch of different shaders its actually 
+		// very possible you want to have definitions for a bunch of different sized push constants (for example, a 2d game or hybrid 2d/3d game or a UI 
+		// element might make use of more push constants that are smaller 
+		
+		struct MarioData
+		{
+			Matrix4 model;
+			Matrix4 normal;
+		};
 
 	}
 }

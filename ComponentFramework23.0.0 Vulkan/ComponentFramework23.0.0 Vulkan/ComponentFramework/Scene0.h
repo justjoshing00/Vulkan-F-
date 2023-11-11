@@ -15,10 +15,12 @@ class Scene0 : public Scene {
 private:
 	Renderer *renderer;
 	Camera *camera;
+	
+	 
 	Matrix4 mariosModelMatrix; 
 	// normal rotation
 	Matrix4 mariosTransform;
-	Matrix4 Light1Matrix;
+	Matrix4 LightMatrix;
 	Matrix4 CameraMatrix;
 	
 	

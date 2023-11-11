@@ -14,6 +14,6 @@ public:
 	void Perspective(const float fovy_, const float aspectRatio_, const float near_, const float far_);
 	void LookAt(const Vec3& eye, const Vec3& at, const Vec3& up);
 	inline Matrix4 GetProjectionMatrix() { return projection; }
-	inline Matrix4 GetViewMatrix() { return view; }
+	inline Matrix4 GetViewMatrix() { return view; } 
 };
 
