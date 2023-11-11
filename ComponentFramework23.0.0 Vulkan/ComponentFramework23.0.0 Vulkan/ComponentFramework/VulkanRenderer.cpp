@@ -68,18 +68,8 @@ void VulkanRenderer::Render() {
         throw std::runtime_error("failed to submit draw command buffer!");
     }
     //tomove 2
-    VkPresentInfoKHR presentInfo{};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
-    presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = signalSemaphores;
-
     VkSwapchainKHR swapChains[] = { swapChain };
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = swapChains;
-
-    presentInfo.pImageIndices = &imageIndex;
-
+    VkPresentInfoKHR presentInfo = VkUtilities::createpresentinfo(VK_STRUCTURE_TYPE_PRESENT_INFO_KHR, 1, signalSemaphores, 1, swapChains, &imageIndex);
     result = vkQueuePresentKHR(presentQueue, &presentInfo);
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {

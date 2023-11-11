@@ -55,4 +55,20 @@ namespace VkUtilities
 
         return result;
     }
+
+    auto createpresentinfo(VkStructureType stype_, uint32_t waitsemaphorecount_, VkSemaphore waitsemaphores_[], uint32_t swapchaincount_, VkSwapchainKHR swapchains_[],  uint32_t* imageindex_)
+    {
+        VkPresentInfoKHR presentInfo{};
+        presentInfo.sType = stype_;
+
+        presentInfo.waitSemaphoreCount = waitsemaphorecount_;
+        presentInfo.pWaitSemaphores = waitsemaphores_;
+
+        
+        presentInfo.swapchainCount = swapchaincount_;
+        presentInfo.pSwapchains = swapchains_;
+
+        presentInfo.pImageIndices = imageindex_;
+        return presentInfo;
+    }
 }
