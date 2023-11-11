@@ -67,7 +67,7 @@ void VulkanRenderer::Render() {
     if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
         throw std::runtime_error("failed to submit draw command buffer!");
     }
-    //tomove 2
+    
     VkSwapchainKHR swapChains[] = { swapChain };
     VkPresentInfoKHR presentInfo = VkUtilities::createpresentinfo(VK_STRUCTURE_TYPE_PRESENT_INFO_KHR, 1, signalSemaphores, 1, swapChains, &imageIndex);
     result = vkQueuePresentKHR(presentQueue, &presentInfo);
@@ -245,25 +245,13 @@ void VulkanRenderer::createInstance() {
     if (enableValidationLayers && !checkValidationLayerSupport()) {
         throw std::runtime_error("validation layers requested, but not available!");
     }
-    //see what additional app info we can provide
-    //tomove 3
-    VkApplicationInfo appInfo{};
-    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = "Vulkan Renderer";
-    appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.pEngineName = "Game 308";
-    appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_0;
-    // tomove 4
-    VkInstanceCreateInfo createInfo{};
-    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    createInfo.pApplicationInfo = &appInfo;
 
-    //p sure this is a std vector of const char
     auto extensions = getRequiredExtensions();
-    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-    createInfo.ppEnabledExtensionNames = extensions.data();
 
+    VkApplicationInfo appInfo = VkUtilities::createappinfo(VK_STRUCTURE_TYPE_APPLICATION_INFO, "Vulkan Renderer", VK_MAKE_VERSION(1, 0, 0), "Game 308", VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_0);
+    
+    VkInstanceCreateInfo createInfo = VkUtilities::createinstanceinfo(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, &appInfo, static_cast<uint32_t>(extensions.size()), extensions.data());
+   
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
     if (enableValidationLayers) {
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());

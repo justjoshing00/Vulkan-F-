@@ -71,4 +71,25 @@ namespace VkUtilities
         presentInfo.pImageIndices = imageindex_;
         return presentInfo;
     }
+    auto createappinfo(VkStructureType stype_, const char* appname_, uint32_t appversion_, const char* enginename_, uint32_t engineversion_, uint32_t apiversion_)
+    {
+        VkApplicationInfo result{};
+        result.sType = stype_;
+        result.pApplicationName = appname_;
+        result.applicationVersion = appversion_;
+        result.pEngineName = enginename_;
+        result.engineVersion = engineversion_;
+        result.apiVersion = apiversion_;
+        return result;
+    }
+
+    auto createinstanceinfo(VkStructureType stype_, VkApplicationInfo* appInfo, uint32_t extensioncount_, const char* const* extensionnames_)
+    {
+        VkInstanceCreateInfo result;
+        result.sType = stype_;
+        result.pApplicationInfo = appInfo;
+        result.enabledExtensionCount = extensioncount_;
+        result.ppEnabledExtensionNames = extensionnames_;
+        return result;
+    }
 }
