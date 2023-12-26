@@ -1,0 +1,24 @@
+gpu
+layout(push_constant)uniform marioconst
+{
+	mat4 model
+	mat4 normalmatrix
+} Mariodata //doesnt have to match names on cpu 
+
+cpu
+struct Mariodata
+{
+	mat4 model
+	mat4 normalmatrix
+}
+
+pushconstantrange = 1;
+(really, just go see the manual on this)
+assign the info to the range by refernce
+
+after binding the pipeline, before the draw pass, translate() the model
+after that, call vkcommandpushconstants() or do something like 
+
+commandbuffer.pushConstants(pipelinelayout, shaderstageflags, offset,sizeof(mariodata), objectdata)  
+
+ 

@@ -18,8 +18,10 @@ private:
 	
 	 
 	Matrix4 mariosModelMatrix; 
+	Matrix4 cubeModelMatrix; 
 	// normal rotation
 	Matrix4 mariosTransform;
+	Matrix4 cubeTransform;
 	Matrix4 LightMatrix;
 	Matrix4 CameraMatrix;
 	

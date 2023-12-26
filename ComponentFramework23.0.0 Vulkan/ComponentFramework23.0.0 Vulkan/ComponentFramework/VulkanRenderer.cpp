@@ -625,11 +625,13 @@ void VulkanRenderer::CreateGraphicsPipeline(const std::string vert, const std::s
     pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
     //this is where we declare our push constants.
     pipelineLayoutInfo.pushConstantRangeCount = 1;
+
     VkPushConstantRange pushConstant;
     pushConstant.offset = 0;
     pushConstant.size = sizeof(VkConcepts::PushConstants::MarioData);
     pushConstant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     pipelineLayoutInfo.pPushConstantRanges = &pushConstant;
+
     if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
         throw std::runtime_error("failed to create pipeline layout!");
     }
@@ -1207,6 +1209,8 @@ void VulkanRenderer::createCommandBuffers() {
         throw std::runtime_error("failed to allocate command buffers!");
     }
 
+
+    //move this into a recordcommandbuffer function?
     for (size_t i = 0; i < commandBuffers.size(); i++) {
         //tomove 54
         VkCommandBufferBeginInfo beginInfo{};
@@ -1249,7 +1253,10 @@ void VulkanRenderer::createCommandBuffers() {
         //when we use the push constant, we might need to change things here
         vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
         
-        vkCmdPushConstants(commandBuffers[i], pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(Mario), &Mario);
+        //vkCmdPushConstants(commandBuffers[i], pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(Mario), &Mario);
+
+        vkCmdPushConstants(commandBuffers[i], pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(Cube), &Cube);
+        
         vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffers[i]);

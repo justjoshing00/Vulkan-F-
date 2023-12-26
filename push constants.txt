@@ -1,0 +1,10 @@
+-they dont require memory to be set aside for them, because they use memory alredy set aside for vulkan
+-they are declared alongside the other crap you do in vkpipelinecreateinfo as pushconstantranges
+-pushconstantrange is a pointer to an array of push constant ranges 
+-one per pipeline
+-garunteed to be 128 kb 
+
+so three(ish) parts:
+declare in pipeline
+consume in the shader
+update with vkcmdpushconstants  

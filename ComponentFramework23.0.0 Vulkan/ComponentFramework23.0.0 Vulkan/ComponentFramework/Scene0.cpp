@@ -70,7 +70,9 @@ void Scene0::Render() const {
 		vRenderer = dynamic_cast<VulkanRenderer*>(renderer);
 		vRenderer->SetCameraUBO(camera->GetProjectionMatrix(), camera->GetViewMatrix(), CameraMatrix); // this is one of the things im going to need to mess with
 		vRenderer->SetGlobalLightingUBO(diffuses,positions); // this is one of the things im going to need to mess with
+		
 		vRenderer->SetModelConstant(mariosModelMatrix, mariosTransform);
+		vRenderer->SetModelConstant(cubeModelMatrix, cubeTransform);
 		
 		
 		

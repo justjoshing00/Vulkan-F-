@@ -119,5 +119,11 @@ namespace VkConcepts
 			Matrix4 normal;
 		};
 
+		struct CubeData
+		{
+			Matrix4 model;
+			Matrix4 normal;
+		};
+
 	}
 }
